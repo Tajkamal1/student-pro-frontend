@@ -2,27 +2,23 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  GraduationCap,
-  Menu,
-  X,
-  LayoutDashboard,
-  CalendarCheck,
-  Code2,
-  BarChart3,
+  GraduationCap, Menu, X,
+  LayoutDashboard, CalendarCheck, Code2, FolderOpen, LogOut,
 } from "lucide-react";
 
 const navItems = [
-  { title: "Dashboard", path: "/", icon: LayoutDashboard },
+  { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { title: "Daily Tasks", path: "/tasks", icon: CalendarCheck },
   { title: "Practice", path: "/practice", icon: Code2 },
-  { title: "Attendance", path: "/attendance", icon: BarChart3 },
+  { title: "Student Storage", path: "/storage", icon: FolderOpen },
 ];
 
 interface MobileTopbarProps {
   userName: string;
+  onLogout?: () => void;
 }
 
-const MobileTopbar = ({ userName }: MobileTopbarProps) => {
+const MobileTopbar = ({ userName, onLogout }: MobileTopbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -58,14 +54,9 @@ const MobileTopbar = ({ userName }: MobileTopbarProps) => {
                 return (
                   <button
                     key={item.path}
-                    onClick={() => {
-                      navigate(item.path);
-                      setMenuOpen(false);
-                    }}
+                    onClick={() => { navigate(item.path); setMenuOpen(false); }}
                     className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent"
+                      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent"
                     }`}
                   >
                     <item.icon className="h-5 w-5" />
@@ -73,6 +64,15 @@ const MobileTopbar = ({ userName }: MobileTopbarProps) => {
                   </button>
                 );
               })}
+              {onLogout && (
+                <button
+                  onClick={() => { onLogout(); setMenuOpen(false); }}
+                  className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Logout
+                </button>
+              )}
             </nav>
           </motion.div>
         )}
