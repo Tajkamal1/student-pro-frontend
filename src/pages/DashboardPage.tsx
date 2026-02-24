@@ -17,6 +17,9 @@ import StatsBar from "@/components/StatsBar";
 
 import { api, getUserId, clearUserId } from "@/services/api";
 
+// ================================
+// 🔹 USER DATA TYPE
+// ================================
 interface UserData {
   name?: string;
   email?: string;
@@ -45,7 +48,6 @@ const DashboardPage = () => {
     const fetchUserData = async () => {
       try {
         const response = await api.get(`/dashboard/user/${userId}`);
-
         setUser(response.data);
       } catch (error) {
         console.error("Dashboard fetch failed:", error);
@@ -62,7 +64,7 @@ const DashboardPage = () => {
   }, [userId, navigate]);
 
   // ================================
-  // 🔐 LOGOUT
+  // 🔐 LOGOUT FUNCTION
   // ================================
   const handleLogout = () => {
     clearUserId();
@@ -84,6 +86,9 @@ const DashboardPage = () => {
     );
   }
 
+  // ================================
+  // 🧠 SAFE FALLBACK VALUES
+  // ================================
   const userName = user?.name || "Student";
 
   const cards = [
@@ -125,6 +130,9 @@ const DashboardPage = () => {
     },
   ];
 
+  // ================================
+  // 🌤 GREETING FUNCTION
+  // ================================
   const greeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good Morning";
@@ -132,6 +140,9 @@ const DashboardPage = () => {
     return "Good Evening";
   };
 
+  // ================================
+  // 🖥 MAIN RETURN
+  // ================================
   return (
     <div className="flex min-h-screen w-full">
       <DashboardSidebar userName={userName} onLogout={handleLogout} />
