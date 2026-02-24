@@ -4,25 +4,27 @@ import {
   LayoutDashboard,
   CalendarCheck,
   Code2,
-  BarChart3,
+  FolderOpen,
   GraduationCap,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
-  { title: "Dashboard", path: "/", icon: LayoutDashboard },
+  { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { title: "Daily Tasks", path: "/tasks", icon: CalendarCheck },
   { title: "Practice", path: "/practice", icon: Code2 },
-  { title: "Attendance", path: "/attendance", icon: BarChart3 },
+  { title: "Student Storage", path: "/storage", icon: FolderOpen },
 ];
 
 interface DashboardSidebarProps {
   userName: string;
+  onLogout?: () => void;
 }
 
-const DashboardSidebar = ({ userName }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ userName, onLogout }: DashboardSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -37,42 +39,23 @@ const DashboardSidebar = ({ userName }: DashboardSidebarProps) => {
       }`}
       style={{ boxShadow: "var(--shadow-sidebar)" }}
     >
-      {/* Top section */}
       <div>
-        {/* Logo */}
         <div className="flex items-center justify-between p-5 pb-2">
           {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center gap-2"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
               <GraduationCap className="h-7 w-7 text-gold" />
-              <span className="font-display text-lg font-bold tracking-wide">
-                StudentPro
-              </span>
+              <span className="font-display text-lg font-bold tracking-wide">StudentPro</span>
             </motion.div>
           )}
-          {collapsed && (
-            <GraduationCap className="mx-auto h-7 w-7 text-gold" />
-          )}
+          {collapsed && <GraduationCap className="mx-auto h-7 w-7 text-gold" />}
         </div>
 
-        {/* Collapse toggle */}
         <div className="flex justify-end px-3 pb-4">
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="rounded-md p-1.5 transition-colors hover:bg-white/10"
-          >
-            {collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
+          <button onClick={() => setCollapsed(!collapsed)} className="rounded-md p-1.5 transition-colors hover:bg-white/10">
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="space-y-1.5 px-3">
           {navItems.map((item, index) => {
             const isActive = location.pathname === item.path;
@@ -101,8 +84,19 @@ const DashboardSidebar = ({ userName }: DashboardSidebarProps) => {
         </nav>
       </div>
 
-      {/* Profile at bottom */}
-      <div className="p-4">
+      {/* Bottom */}
+      <div className="space-y-3 p-4">
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white ${
+              collapsed ? "justify-center" : ""
+            }`}
+          >
+            <LogOut className="h-4 w-4 flex-shrink-0" />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        )}
         <div
           className={`flex items-center gap-3 rounded-xl border border-white/15 bg-white/8 p-3 backdrop-blur-sm ${
             collapsed ? "justify-center" : ""
