@@ -1,27 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { api, setUserId } from "@/services/api";
-import { GraduationCap, Mail, Lock, ArrowRight, Sparkles, Target, TrendingUp } from "lucide-react";
+import {
+  GraduationCap,
+  Mail,
+  Lock,
+  ArrowRight,
+  Sparkles,
+  Target,
+  TrendingUp,
+} from "lucide-react";
+
+import { api, setUserId, getUserId } from "@/services/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ===========================
+  // 🔐 AUTO REDIRECT IF LOGGED IN
+  // ===========================
+  useEffect(() => {
+    const existingUser = getUserId();
+    if (existingUser) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
+  // ===========================
+  // 🔐 LOGIN HANDLER
+  // ===========================
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", { email, password });
-      setUserId(response.data.userId);
+      const res = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
+      // If backend returns token also store it
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+
+      setUserId(res.data.userId);
+
       navigate("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Login failed. Please try again.");
+      setError(
+        err.response?.data?.detail ||
+          err.response?.data?.message ||
+          "Invalid email or password"
+      );
     } finally {
       setLoading(false);
     }
@@ -29,7 +67,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Left - Form */}
+      {/* ================= LEFT - FORM ================= */}
       <motion.div
         initial={{ x: -40, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -40,11 +78,17 @@ const LoginPage = () => {
           {/* Logo */}
           <div className="mb-10 flex items-center gap-2">
             <GraduationCap className="h-8 w-8 text-primary" />
-            <span className="font-display text-2xl font-bold text-foreground">StudentPro</span>
+            <span className="font-display text-2xl font-bold text-foreground">
+              StudentPro
+            </span>
           </div>
 
-          <h2 className="mb-2 font-display text-3xl font-bold text-foreground">Welcome back</h2>
-          <p className="mb-8 text-muted-foreground">Sign in to continue your learning journey</p>
+          <h2 className="mb-2 font-display text-3xl font-bold text-foreground">
+            Welcome back
+          </h2>
+          <p className="mb-8 text-muted-foreground">
+            Sign in to continue your learning journey
+          </p>
 
           {error && (
             <motion.div
@@ -57,6 +101,7 @@ const LoginPage = () => {
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
+            {/* Email */}
             <div className="group relative">
               <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <input
@@ -69,6 +114,7 @@ const LoginPage = () => {
               />
             </div>
 
+            {/* Password */}
             <div className="group relative">
               <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <input
@@ -81,6 +127,7 @@ const LoginPage = () => {
               />
             </div>
 
+            {/* Submit */}
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
@@ -111,7 +158,7 @@ const LoginPage = () => {
         </div>
       </motion.div>
 
-      {/* Right - Branding */}
+      {/* ================= RIGHT - BRANDING ================= */}
       <motion.div
         initial={{ x: 40, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -125,22 +172,32 @@ const LoginPage = () => {
           >
             <GraduationCap className="mx-auto mb-8 h-20 w-20 text-gold" />
           </motion.div>
-          <h2 className="mb-4 font-display text-4xl font-bold">Track. Plan. Succeed.</h2>
+
+          <h2 className="mb-4 font-display text-4xl font-bold">
+            Track. Plan. Succeed.
+          </h2>
+
           <p className="mb-10 text-lg text-white/70">
-            Join thousands of students who use StudentPro to boost their productivity,
+            Join thousands of students who use StudentPro to boost productivity,
             maintain learning streaks, and achieve academic excellence.
           </p>
+
           <div className="flex justify-center gap-8">
             {[
               { icon: Target, label: "Focus" },
               { icon: TrendingUp, label: "Grow" },
               { icon: Sparkles, label: "Excel" },
             ].map((item) => (
-              <div key={item.label} className="flex flex-col items-center gap-2">
+              <div
+                key={item.label}
+                className="flex flex-col items-center gap-2"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
                   <item.icon className="h-6 w-6 text-gold" />
                 </div>
-                <span className="text-sm font-medium text-white/80">{item.label}</span>
+                <span className="text-sm font-medium text-white/80">
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>

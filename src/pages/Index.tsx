@@ -1,24 +1,60 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GraduationCap, ArrowRight, CheckCircle2, BarChart3, Code2, Sparkles } from "lucide-react";
+import {
+  GraduationCap,
+  ArrowRight,
+  CheckCircle2,
+  BarChart3,
+  Code2,
+  Sparkles,
+} from "lucide-react";
+
+import { getUserId } from "@/services/api";
 
 const features = [
-  { icon: CheckCircle2, title: "Task Management", desc: "Organize and track your daily learning goals" },
-  { icon: Code2, title: "Practice Hub", desc: "Access top coding & cybersecurity platforms" },
-  { icon: BarChart3, title: "Progress Tracking", desc: "Monitor your growth with detailed analytics" },
+  {
+    icon: CheckCircle2,
+    title: "Task Management",
+    desc: "Organize and track your daily learning goals",
+  },
+  {
+    icon: Code2,
+    title: "Practice Hub",
+    desc: "Access top coding & cybersecurity platforms",
+  },
+  {
+    icon: BarChart3,
+    title: "Progress Tracking",
+    desc: "Monitor your growth with detailed analytics",
+  },
 ];
 
 const Index = () => {
   const navigate = useNavigate();
 
+  // ===========================
+  // 🔐 AUTO REDIRECT IF LOGGED IN
+  // ===========================
+  useEffect(() => {
+    const userId = getUserId();
+
+    if (userId) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      {/* Nav */}
+      {/* ================= NAV ================= */}
       <nav className="flex items-center justify-between px-6 py-4 md:px-12">
         <div className="flex items-center gap-2">
           <GraduationCap className="h-7 w-7 text-primary" />
-          <span className="font-display text-xl font-bold text-foreground">StudentPro</span>
+          <span className="font-display text-xl font-bold text-foreground">
+            StudentPro
+          </span>
         </div>
+
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/login")}
@@ -26,6 +62,7 @@ const Index = () => {
           >
             Sign In
           </button>
+
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
@@ -37,7 +74,7 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* ================= HERO ================= */}
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <motion.div
           initial={{ y: 30, opacity: 0 }}
@@ -59,7 +96,8 @@ const Index = () => {
           </h1>
 
           <p className="mx-auto mb-10 max-w-lg text-lg text-muted-foreground">
-            Track tasks, practice coding, manage resources, and stay on top of your academic life — all in one place.
+            Track tasks, practice coding, manage resources, and stay on top of
+            your academic life — all in one place.
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -72,6 +110,7 @@ const Index = () => {
               Start Free
               <ArrowRight className="h-4 w-4" />
             </motion.button>
+
             <button
               onClick={() => navigate("/login")}
               className="rounded-xl border border-border px-8 py-3.5 font-semibold text-foreground transition-all hover:bg-accent"
@@ -81,14 +120,14 @@ const Index = () => {
           </div>
         </motion.div>
 
-        {/* Features */}
+        {/* ================= FEATURES ================= */}
         <motion.div
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-20 grid max-w-4xl gap-6 sm:grid-cols-3"
         >
-          {features.map((f, i) => (
+          {features.map((f) => (
             <motion.div
               key={f.title}
               whileHover={{ y: -4 }}
@@ -98,7 +137,11 @@ const Index = () => {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <f.icon className="h-6 w-6" />
               </div>
-              <h3 className="mb-2 font-display text-base font-bold text-card-foreground">{f.title}</h3>
+
+              <h3 className="mb-2 font-display text-base font-bold text-card-foreground">
+                {f.title}
+              </h3>
+
               <p className="text-sm text-muted-foreground">{f.desc}</p>
             </motion.div>
           ))}

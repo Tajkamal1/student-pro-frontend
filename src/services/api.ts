@@ -1,22 +1,25 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://student-pro-backend.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:5000";
+// OR
+// const API_BASE_URL = "http://localhost:5000";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Helper to get userId from localStorage
+// ===== User ID Helpers =====
 export const getUserId = (): string | null => {
   return localStorage.getItem("userId");
 };
 
-// Helper to set userId
 export const setUserId = (id: string) => {
   localStorage.setItem("userId", id);
 };
 
-// Helper to clear userId (logout)
 export const clearUserId = () => {
   localStorage.removeItem("userId");
 };
